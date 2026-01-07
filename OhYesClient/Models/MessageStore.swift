@@ -25,4 +25,16 @@ class MessageStore: ObservableObject {
     func clearMessages() {
         messages.removeAll()
     }
+    
+    func markAsDone(_ message: Message) {
+        // Update database if linked to a real todo
+        if let todoId = message.originalTodoId {
+            DatabaseManager.shared.markTodoAsCompleted(id: todoId)
+        }
+        
+        // Remove from local list
+        if let index = messages.firstIndex(where: { $0.id == message.id }) {
+            messages.remove(at: index)
+        }
+    }
 }

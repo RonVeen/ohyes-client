@@ -19,6 +19,7 @@ struct ContentView: View {
 }
 
 struct MessageRow: View {
+    @EnvironmentObject var messageStore: MessageStore
     let message: Message
 
     var body: some View {
@@ -47,6 +48,18 @@ struct MessageRow: View {
                     }
                 }
             }
+            
+            Spacer()
+            
+            Button(action: {
+                withAnimation {
+                    messageStore.markAsDone(message)
+                }
+            }) {
+                Image(systemName: "checkmark")
+            }
+            .buttonStyle(.borderless)
+            .help("Mark as Done")
         }
         .padding(.vertical, 4)
     }
