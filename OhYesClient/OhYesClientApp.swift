@@ -41,6 +41,10 @@ struct OhYesClientApp: App {
                     pollingService.stopPolling()
                 }
         }
+        
+        Settings {
+            SettingsView()
+        }
         .commands {
             // File Menu
             CommandGroup(replacing: .appInfo) {

@@ -38,6 +38,11 @@ class DatabaseManager {
             print("Error connecting to database: \(error)")
         }
     }
+    
+    func reconnect() {
+        print("Reconnecting to database...")
+        connectToDatabase()
+    }
 
     func getConnection() -> Connection? {
         return db
@@ -55,7 +60,8 @@ class DatabaseManager {
         do {
             let query = todoTable
                 .filter(completed == "N")
-                .filter(due != nil && due! <= currentTime)
+                .filter(due != nil)
+                .filter(due <= currentTime)
                 .order(priority.desc, due.asc)
 
             var todos: [Todo] = []
