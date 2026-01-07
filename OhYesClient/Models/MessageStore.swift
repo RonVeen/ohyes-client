@@ -11,8 +11,13 @@ import Combine
 class MessageStore: ObservableObject {
     @Published var messages: [Message] = []
 
-    func addMessage(_ text: String) {
-        let message = Message(text: text)
+    func addMessage(_ text: String, originalTodoId: Int64? = nil, priority: Int = 0, dueDate: Date? = nil) {
+        let message = Message(
+            originalTodoId: originalTodoId,
+            text: text,
+            priority: priority,
+            dueDate: dueDate
+        )
         // Insert at the beginning to show newest messages at top
         messages.insert(message, at: 0)
     }

@@ -55,7 +55,12 @@ class TodoPollingService: ObservableObject {
 
         // Add message to the text view
         DispatchQueue.main.async { [weak self] in
-            self?.messageStore?.addMessage(todo.text)
+            self?.messageStore?.addMessage(
+                todo.text,
+                originalTodoId: todo.id,
+                priority: todo.priority,
+                dueDate: todo.due
+            )
         }
 
         // Send system notification
