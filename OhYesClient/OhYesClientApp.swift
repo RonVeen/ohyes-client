@@ -71,5 +71,12 @@ struct OhYesClientApp: App {
                 .keyboardShortcut("k", modifiers: [.command])
             }
         }
+        
+        MenuBarExtra("OhYes", systemImage: "checklist") {
+            ContentView()
+                .environmentObject(messageStore)
+                .frame(width: 400, height: 400)
+        }
+        .menuBarExtraStyle(.window)
     }
 }
