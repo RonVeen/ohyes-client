@@ -78,7 +78,11 @@ class TodoPollingService: ObservableObject {
         
         // Play system sound immediately for feedback
         DispatchQueue.main.async {
-            NSSound.beep()
+            if let sound = NSSound(named: "Glass") {
+                sound.play()
+            } else {
+                NSSound.beep()
+            }
         }
     }
 
