@@ -12,6 +12,9 @@ import UserNotifications
 struct OhYesClientApp: App {
     @StateObject private var messageStore = MessageStore()
     @StateObject private var pollingService = TodoPollingService()
+    
+    // Delegate to handle foreground notifications
+    @StateObject private var notificationDelegate = NotificationDelegate()
 
     init() {
         // Initialize database connection on app launch
@@ -32,6 +35,9 @@ struct OhYesClientApp: App {
             ContentView()
                 .environmentObject(messageStore)
                 .onAppear {
+                    // Set the delegate
+                    UNUserNotificationCenter.current().delegate = notificationDelegate
+                    
                     // Connect polling service to message store
                     pollingService.messageStore = messageStore
                     // Start polling for due todos

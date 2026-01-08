@@ -75,6 +75,11 @@ class TodoPollingService: ObservableObject {
                 print("Error showing notification: \(error.localizedDescription)")
             }
         }
+        
+        // Play system sound immediately for feedback
+        DispatchQueue.main.async {
+            NSSound.beep()
+        }
     }
 
     deinit {
