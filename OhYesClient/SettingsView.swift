@@ -54,9 +54,15 @@ struct SettingsView: View {
                     }
                 }
             }
+            
+            Section {
+                Text("Settings saved to ~/ohyes.properties")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
         }
         .padding(20)
-        .frame(width: 500, height: 250)
+        .frame(width: 500, height: 280)
         .onAppear {
             loadCurrentConfig()
         }
@@ -69,7 +75,8 @@ struct SettingsView: View {
     }
     
     private func validateAndSaveTime(_ time: String) {
-        let timeRegex = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+        // Strict hh:mm format (00-23):(00-59)
+        let timeRegex = "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"
         let timePredicate = NSPredicate(format: "SELF MATCHES %@", timeRegex)
         
         if timePredicate.evaluate(with: time) {
