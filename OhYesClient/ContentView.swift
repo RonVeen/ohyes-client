@@ -11,9 +11,37 @@ struct ContentView: View {
     @EnvironmentObject var messageStore: MessageStore
 
     var body: some View {
-        List(messageStore.messages) { message in
-            MessageRow(message: message)
+        Group {
+            if messageStore.messages.isEmpty {
+                VStack(spacing: 20) {
+                    Image(systemName: "bell.slash")
+                        .font(.system(size: 48))
+                        .foregroundColor(.secondary)
+                    Text("There are currently no notifications")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(nsColor: .textBackgroundColor))
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                )
+            } else {
+                List(messageStore.messages) { message in
+                    MessageRow(message: message)
+                }
+                .listStyle(.inset)
+                .background(Color(nsColor: .textBackgroundColor))
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+            }
         }
+        .padding()
         .frame(minWidth: 400, minHeight: 300)
     }
 }
