@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @State private var databasePath: String = ""
+    @State private var defaultDueTime: String = ""
+    @State private var timeErrorMessage: String = ""
     
     var body: some View {
         Form {
@@ -29,9 +31,32 @@ struct SettingsView: View {
                     }
                 }
             }
+            
+            Section(header: Text("Defaults")) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Default due time for new todos (hh:mm):")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    HStack {
+                        TextField("09:00", text: $defaultDueTime)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(width: 80)
+                            .onChange(of: defaultDueTime) { newValue in
+                                validateAndSaveTime(newValue)
+                            }
+                        
+                        if !timeErrorMessage.isEmpty {
+                            Text(timeErrorMessage)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
+                    }
+                }
+            }
         }
         .padding(20)
-        .frame(width: 500, height: 150)
+        .frame(width: 500, height: 250)
         .onAppear {
             loadCurrentConfig()
         }
@@ -40,6 +65,19 @@ struct SettingsView: View {
     private func loadCurrentConfig() {
         let config = ConfigManager.shared.loadConfig()
         databasePath = config.databasePath
+        defaultDueTime = config.defaultDueTime
+    }
+    
+    private func validateAndSaveTime(_ time: String) {
+        let timeRegex = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+        let timePredicate = NSPredicate(format: "SELF MATCHES %@", timeRegex)
+        
+        if timePredicate.evaluate(with: time) {
+            timeErrorMessage = ""
+            saveConfig()
+        } else {
+            timeErrorMessage = "Invalid format (hh:mm)"
+        }
     }
     
     private func selectDatabaseFile() {
@@ -49,24 +87,28 @@ struct SettingsView: View {
         panel.canChooseFiles = true
         panel.allowedContentTypes = [.database, .data] // Attempt to filter for db files
         
-        // If we can't depend on UTType for .db, we can use simple extensions check logic in strict environments
-        // But NSOpenPanel handles allowedFileTypes (deprecated) or allowedContentTypes
-        
         panel.begin { response in
             if response == .OK, let url = panel.url {
-                let newPath = url.path
-                self.databasePath = newPath
-                saveConfig(newPath: newPath)
+                self.databasePath = url.path
+                saveConfig()
+                // Reconnect database specifically when path changes
+                DatabaseManager.shared.reconnect()
             }
         }
     }
     
-    private func saveConfig(newPath: String) {
+    private func saveConfig() {
         var config = ConfigManager.shared.loadConfig()
-        config.databasePath = newPath
-        ConfigManager.shared.saveConfig(config)
+        config.databasePath = databasePath
+        // Only save time if it's valid, otherwise keep old or don't update?
+        // Since we validate before calling saveConfig in onChange, we can trust it?
+        // Actually, if validation fails in onChange, we don't call saveConfig.
+        // But selectDatabaseFile calls saveConfig. We should ensure we don't save invalid time.
         
-        // Reconnect database
-        DatabaseManager.shared.reconnect()
+        if timeErrorMessage.isEmpty {
+            config.defaultDueTime = defaultDueTime
+        }
+        
+        ConfigManager.shared.saveConfig(config)
     }
 }

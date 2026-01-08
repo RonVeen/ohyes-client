@@ -9,9 +9,11 @@ import Foundation
 
 struct AppConfig: Codable {
     var databasePath: String
+    var defaultDueTime: String
 
     static let `default` = AppConfig(
-        databasePath: "/Users/ron/sources/ohyes/target/todo.db"
+        databasePath: "/Users/ron/sources/ohyes/target/todo.db",
+        defaultDueTime: "09:00"
     )
 }
 
