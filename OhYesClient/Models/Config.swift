@@ -22,7 +22,7 @@ struct AppConfig {
 
     static let `default` = AppConfig(
         databasePath: "/Users/ron/sources/ohyes/target/todo.db",
-        defaultDueTime: "09:00"
+        defaultDueTime: "17:00"
     )
 }
 

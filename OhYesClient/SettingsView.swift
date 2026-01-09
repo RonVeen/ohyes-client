@@ -14,14 +14,9 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("Database")) {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Location of the OhYes SQLite database:")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
+            Section(header: Text("")) {
                     HStack {
-                        TextField("Database Path", text: $databasePath)
+                        TextField("Path", text: $databasePath)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .disabled(true) // Read-only, use browse button
                         
@@ -29,19 +24,13 @@ struct SettingsView: View {
                             selectDatabaseFile()
                         }
                     }
-                }
             }
             
-            Section(header: Text("Defaults")) {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Default due time for new todos (hh:mm):")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
+            Section(header: Text("")) {
                     HStack {
-                        TextField("09:00", text: $defaultDueTime)
+                        TextField("Default due time", text: $defaultDueTime)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(width: 80)
+                            .frame(width: 160)
                             .onChange(of: defaultDueTime) { newValue in
                                 validateAndSaveTime(newValue)
                             }
@@ -52,7 +41,6 @@ struct SettingsView: View {
                                 .font(.caption)
                         }
                     }
-                }
             }
             
             Section {

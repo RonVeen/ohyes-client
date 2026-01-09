@@ -18,7 +18,7 @@ struct AddTodoView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("New Todo")) {
+            Section(header: Text("Adding a new Todo")) {
                 TextField("Task Description", text: $text)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 
