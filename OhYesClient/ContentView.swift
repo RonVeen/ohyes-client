@@ -90,6 +90,29 @@ struct MessageRow: View {
             }
             .buttonStyle(.borderless)
             .help("Mark as Done")
+            
+            Menu {
+                Button("Delay 5 min") {
+                    withAnimation {
+                        messageStore.snoozeMessage(message, minutes: 5)
+                    }
+                }
+                Button("Delay 30 min") {
+                    withAnimation {
+                        messageStore.snoozeMessage(message, minutes: 30)
+                    }
+                }
+                Button("Delay 60 min") {
+                    withAnimation {
+                        messageStore.snoozeMessage(message, minutes: 60)
+                    }
+                }
+            } label: {
+                Image(systemName: "clock")
+            }
+            .menuStyle(.borderlessButton)
+            .fixedSize()
+            .help("Snooze notification")
         }
         .padding(.vertical, 4)
     }

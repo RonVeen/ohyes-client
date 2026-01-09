@@ -103,4 +103,22 @@ class DatabaseManager {
             print("Error marking todo as completed: \(error)")
         }
     }
+    
+    // Update due date for a todo (Snooze)
+    func updateTodoDueDate(id todoId: Int64, newDate: Date) {
+        guard let database = db else {
+            print("Database connection not available")
+            return
+        }
+        
+        let newTimestamp = Int64(newDate.timeIntervalSince1970 * 1000)
+        
+        do {
+            let todo = todoTable.filter(id == todoId)
+            try database.run(todo.update(due <- newTimestamp))
+            print("Updated due date for todo \(todoId) to \(newDate)")
+        } catch {
+            print("Error updating due date: \(error)")
+        }
+    }
 }
