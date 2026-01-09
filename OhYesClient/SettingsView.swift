@@ -97,7 +97,7 @@ struct SettingsView: View {
                     Spacer()
                     Text("Settings saved to ~/ohyes.properties")
                         .font(.caption2)
-                        .foregroundColor(.tertiaryLabel)
+                        .foregroundColor(Color(nsColor: .tertiaryLabelColor))
                     Spacer()
                 }
             }
