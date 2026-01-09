@@ -38,6 +38,27 @@ struct SettingsView: View {
             }
             
             Section(header: Text("Defaults")) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Default due time for new todos (hh:mm):")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    HStack {
+                        TextField("09:00", text: $defaultDueTime)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(width: 80)
+                            .onChange(of: defaultDueTime) { newValue in
+                                validateAndSaveTime(newValue)
+                            }
+                        
+                        if !timeErrorMessage.isEmpty {
+                            Text(timeErrorMessage)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
+                    }
+                }
+            }
             
             Section {
                 Text("Settings saved to ~/ohyes.properties")
