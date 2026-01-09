@@ -59,7 +59,8 @@ struct OhYesClientApp: App {
                         options: [
                             NSApplication.AboutPanelOptionKey.applicationName: "OhYes Client",
                             NSApplication.AboutPanelOptionKey.applicationVersion: "0.1",
-                            NSApplication.AboutPanelOptionKey(rawValue: "Copyright"): "OhYes Client v.01"
+                            NSApplication.AboutPanelOptionKey.credits: NSAttributedString(string: "Developed by Ron Veen\n\nA simple and effective task notifier."),
+                            NSApplication.AboutPanelOptionKey(rawValue: "Copyright"): "Copyright © 2026 Ron Veen. All rights reserved."
                         ]
                     )
                 }
