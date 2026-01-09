@@ -121,4 +121,29 @@ class DatabaseManager {
             print("Error updating due date: \(error)")
         }
     }
+    
+    // Insert a new todo
+    func insertTodo(text: String, due: Date) {
+        guard let database = db else {
+            print("Database connection not available")
+            return
+        }
+        
+        let dueTimestamp = Int64(due.timeIntervalSince1970 * 1000)
+        let createdTimestamp = Int64(Date().timeIntervalSince1970 * 1000)
+        
+        do {
+            let insert = todoTable.insert(
+                self.text <- text,
+                self.created <- createdTimestamp,
+                self.completed <- "N",
+                self.priority <- 0, // Default priority
+                self.due <- dueTimestamp
+            )
+            try database.run(insert)
+            print("Inserted new todo: \(text)")
+        } catch {
+            print("Error inserting todo: \(error)")
+        }
+    }
 }

@@ -76,6 +76,14 @@ struct OhYesClientApp: App {
                 }
                 .keyboardShortcut("k", modifiers: [.command])
             }
+            
+            // Edit Menu additions
+            CommandGroup(after: .pasteboard) {
+                Button("Insert Todo") {
+                    NotificationCenter.default.post(name: Notification.Name("InsertTodo"), object: nil)
+                }
+                .keyboardShortcut("i", modifiers: [.command])
+            }
         }
         
         MenuBarExtra("OhYes", systemImage: "checklist") {

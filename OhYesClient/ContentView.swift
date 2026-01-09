@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var messageStore: MessageStore
+    @State private var showAddTodo = false
 
     var body: some View {
         Group {
@@ -43,6 +44,22 @@ struct ContentView: View {
         }
         .padding()
         .frame(minWidth: 400, minHeight: 300)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: { showAddTodo = true }) {
+                    Label("Insert Todo", systemImage: "plus")
+                }
+                .help("Insert Todo (⌘I)")
+            }
+        }
+        .sheet(isPresented: $showAddTodo) {
+            AddTodoView { text, date in
+                DatabaseManager.shared.insertTodo(text: text, due: date)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("InsertTodo"))) { _ in
+            showAddTodo = true
+        }
     }
 }
 
@@ -120,8 +137,8 @@ struct MessageRow: View {
     private func priorityColor(_ priority: Int) -> Color {
         switch priority {
         case 0: return .blue
-        case 1...4: return .yellow
-        case 5...9: return .red
+        case 1...4: return .blue
+        case 5...9: return .blue
         default: return .gray
         }
     }
