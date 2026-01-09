@@ -68,21 +68,21 @@ struct OhYesClientApp: App {
             CommandGroup(replacing: .newItem) {
                 // Remove default "New" item
             }
-
-            // View Menu
-            CommandMenu("View") {
-                Button("Clear") {
-                    messageStore.clearMessages()
-                }
-                .keyboardShortcut("k", modifiers: [.command])
-            }
             
-            // Edit Menu additions
-            CommandGroup(after: .pasteboard) {
+            // Remove Tab Bar commands
+            CommandGroup(replacing: .windowTabbing) { }
+
+            // Add items to View Menu
+            CommandGroup(after: .toolbar) {
                 Button("Insert Todo") {
                     NotificationCenter.default.post(name: Notification.Name("InsertTodo"), object: nil)
                 }
                 .keyboardShortcut("i", modifiers: [.command])
+                
+                Button("Clear") {
+                    messageStore.clearMessages()
+                }
+                .keyboardShortcut("k", modifiers: [.command])
             }
         }
         
