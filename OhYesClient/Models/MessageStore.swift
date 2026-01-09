@@ -18,8 +18,14 @@ class MessageStore: ObservableObject {
             priority: priority,
             dueDate: dueDate
         )
-        // Insert at the beginning to show newest messages at top
-        messages.insert(message, at: 0)
+        messages.append(message)
+        
+        // Sort by due date ascending (oldest due date at top)
+        messages.sort { (m1, m2) -> Bool in
+            let d1 = m1.dueDate ?? m1.timestamp
+            let d2 = m2.dueDate ?? m2.timestamp
+            return d1 < d2
+        }
     }
 
     func clearMessages() {
