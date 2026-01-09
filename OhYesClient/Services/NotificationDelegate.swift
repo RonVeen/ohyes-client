@@ -16,6 +16,6 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate, Observab
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // Show banner and play sound even if app is in foreground
-        completionHandler([.banner, .sound])
+        completionHandler([.banner, .list, .sound])
     }
 }

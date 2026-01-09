@@ -68,6 +68,10 @@ class TodoPollingService: ObservableObject {
         content.title = "OhYes Reminder"
         content.body = todo.text
         content.sound = UNNotificationSound.default
+        
+        if #available(macOS 12.0, *) {
+            content.interruptionLevel = .timeSensitive
+        }
 
         let request = UNNotificationRequest(identifier: "todo-\(todo.id)", content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
