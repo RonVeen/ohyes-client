@@ -21,10 +21,31 @@ class TodoPollingService: ObservableObject {
         // Check immediately on start
         checkForDueTodos()
 
-        // Then check every 60 seconds
-        timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [weak self] _ in
+        // Calculate next minute boundary
+        let now = Date()
+        let calendar = Calendar.current
+        var nextMinuteComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
+        nextMinuteComponents.minute! += 1
+        nextMinuteComponents.second = 0
+        
+        guard let nextMinuteDate = calendar.date(from: nextMinuteComponents) else {
+            // Fallback if date calculation fails (unlikely)
+            timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [weak self] _ in
+                self?.checkForDueTodos()
+            }
+            return
+        }
+        
+        print("Next check scheduled for: \(nextMinuteDate)")
+
+        // Schedule timer to start at next minute and repeat every 60 seconds
+        let timer = Timer(fire: nextMinuteDate, interval: 60.0, repeats: true) { [weak self] _ in
             self?.checkForDueTodos()
         }
+        
+        // Add to run loop manually since we used init(fire:...)
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
     }
 
     func stopPolling() {
