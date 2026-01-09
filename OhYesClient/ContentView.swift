@@ -10,39 +10,58 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var messageStore: MessageStore
     @State private var showAddTodo = false
+    @State private var hudMessage: String? = nil
 
     var body: some View {
-        Group {
-            if messageStore.messages.isEmpty {
-                VStack(spacing: 20) {
-                    Image(systemName: "bell.slash")
-                        .font(.system(size: 48))
-                        .foregroundColor(.secondary)
-                    Text("There are currently no notifications")
-                        .font(.title2)
-                        .foregroundColor(.secondary)
+        ZStack {
+            Group {
+                if messageStore.messages.isEmpty {
+                    VStack(spacing: 20) {
+                        Image(systemName: "bell.slash")
+                            .font(.system(size: 48))
+                            .foregroundColor(.secondary)
+                        Text("There are currently no notifications")
+                            .font(.title2)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(nsColor: .textBackgroundColor))
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+                } else {
+                    List(messageStore.messages) { message in
+                        MessageRow(message: message)
+                    }
+                    .listStyle(.inset)
+                    .background(Color(nsColor: .textBackgroundColor))
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(nsColor: .textBackgroundColor))
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                )
-            } else {
-                List(messageStore.messages) { message in
-                    MessageRow(message: message)
+            }
+            .padding()
+            
+            // HUD Overlay
+            if let message = hudMessage {
+                VStack {
+                    Spacer()
+                    Text(message)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(Color.black.opacity(0.7)))
+                        .foregroundColor(.white)
+                        .font(.subheadline)
+                        .padding(.bottom, 40)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
-                .listStyle(.inset)
-                .background(Color(nsColor: .textBackgroundColor))
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                )
+                .animation(.spring(), value: hudMessage)
             }
         }
-        .padding()
         .frame(minWidth: 400, minHeight: 300)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -55,10 +74,20 @@ struct ContentView: View {
         .sheet(isPresented: $showAddTodo) {
             AddTodoView { text, date in
                 DatabaseManager.shared.insertTodo(text: text, due: date)
+                showHUD(message: "Todo \"\(text)\" added")
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name("InsertTodo"))) { _ in
             showAddTodo = true
+        }
+    }
+    
+    private func showHUD(message: String) {
+        hudMessage = message
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            withAnimation {
+                hudMessage = nil
+            }
         }
     }
 }
