@@ -16,59 +16,95 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("General")) {
-                Toggle("Launch at Login", isOn: $launchAtLoginManager.isEnabled)
+            Section {
+                Toggle(isOn: $launchAtLoginManager.isEnabled) {
+                    Label("Launch at Login", systemImage: "arrow.up.circle")
+                }
+                .help("Automatically start OhYes Client when you log in.")
+            } header: {
+                Label("General", systemImage: "gearshape")
+            } footer: {
+                Text("App will run in the background to check for due tasks.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
             
-            Section(header: Text("Database")) {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Location of the OhYes SQLite database:")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        TextField("Database Path", text: $databasePath)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .disabled(true) // Read-only, use browse button
+                        Image(systemName: "externaldrive")
+                            .foregroundColor(.secondary)
+                        Text(databasePath)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(6)
+                            .background(Color(nsColor: .controlBackgroundColor))
+                            .cornerRadius(6)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
+                            )
                         
                         Button("Browse...") {
                             selectDatabaseFile()
                         }
                     }
                 }
+            } header: {
+                Label("Database", systemImage: "cylinder.split.1x2")
+            } footer: {
+                Text("Select the SQLite database file containing your Todo table.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
             
-            Section(header: Text("Defaults")) {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Default due time for new todos (hh:mm):")
+            Section {
+                HStack {
+                    Label("Default Due Time", systemImage: "clock")
+                    Spacer()
+                    TextField("09:00", text: $defaultDueTime)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(width: 80)
+                        .multilineTextAlignment(.center)
+                        .onChange(of: defaultDueTime) { newValue in
+                            validateAndSaveTime(newValue)
+                        }
+                    
+                    if !timeErrorMessage.isEmpty {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.red)
+                            .help(timeErrorMessage)
+                    }
+                }
+            } header: {
+                Label("Defaults", systemImage: "list.clipboard")
+            } footer: {
+                if !timeErrorMessage.isEmpty {
+                    Text(timeErrorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                } else {
+                    Text("Time format must be HH:mm (e.g. 14:30)")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    
-                    HStack {
-                        TextField("09:00", text: $defaultDueTime)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(width: 80)
-                            .onChange(of: defaultDueTime) { newValue in
-                                validateAndSaveTime(newValue)
-                            }
-                        
-                        if !timeErrorMessage.isEmpty {
-                            Text(timeErrorMessage)
-                                .foregroundColor(.red)
-                                .font(.caption)
-                        }
-                    }
                 }
             }
             
             Section {
-                Text("Settings saved to ~/ohyes.properties")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                HStack {
+                    Spacer()
+                    Text("Settings saved to ~/ohyes.properties")
+                        .font(.caption2)
+                        .foregroundColor(.tertiaryLabel)
+                    Spacer()
+                }
             }
         }
-        .padding(20)
-        .frame(width: 500, height: 280)
+        .formStyle(.grouped)
+        .padding()
+        .frame(width: 500, height: 400)
         .onAppear {
             loadCurrentConfig()
         }
