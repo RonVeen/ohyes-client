@@ -69,8 +69,8 @@ struct OhYesClientApp: App {
                 // Remove default "New" item
             }
 
-            // Add items to View Menu
-            CommandGroup(after: .toolbar) {
+            // Custom Actions Menu
+            CommandMenu("Actions") {
                 Button("Insert Todo") {
                     NotificationCenter.default.post(name: Notification.Name("InsertTodo"), object: nil)
                 }
