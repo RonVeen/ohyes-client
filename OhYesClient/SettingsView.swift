@@ -64,7 +64,7 @@ struct SettingsView: View {
                 HStack {
                     Label("Default Due Time", systemImage: "clock")
                     Spacer()
-                    TextField("09:00", text: $defaultDueTime)
+                    TextField("", text: $defaultDueTime)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(width: 80)
                         .multilineTextAlignment(.center)
@@ -79,7 +79,7 @@ struct SettingsView: View {
                     }
                 }
             } header: {
-                Label("Defaults", systemImage: "list.clipboard")
+                Label("Due", systemImage: "list.clipboard")
             } footer: {
                 if !timeErrorMessage.isEmpty {
                     Text(timeErrorMessage)
