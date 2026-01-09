@@ -17,38 +17,86 @@ struct AddTodoView: View {
     var onSave: (String, Date) -> Void
     
     var body: some View {
-        Form {
-            Section(header: Text("Adding a new Todo")) {
-                TextField("Task Description", text: $text)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+        VStack(spacing: 20) {
+            // Header
+            HStack {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title)
+                    .foregroundColor(.accentColor)
+                Text("New Task")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Spacer()
+            }
+            .padding(.bottom, 5)
+            
+            // Form Fields
+            VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("Description", systemImage: "text.alignleft")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    TextField("What needs to be done?", text: $text)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .font(.body)
+                }
                 
-                DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
-                
-                DatePicker("Due Time", selection: $dueTime, displayedComponents: .hourAndMinute)
-                
-                if !errorMessage.isEmpty {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .font(.caption)
+                HStack(spacing: 20) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Label("Date", systemImage: "calendar")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        DatePicker("", selection: $dueDate, displayedComponents: .date)
+                            .labelsHidden()
+                            .datePickerStyle(.compact)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        Label("Time", systemImage: "clock")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        DatePicker("", selection: $dueTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                            .datePickerStyle(.stepperField)
+                    }
+                    Spacer()
                 }
             }
             
+            // Error Message
+            if !errorMessage.isEmpty {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text(errorMessage)
+                }
+                .foregroundColor(.red)
+                .font(.caption)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 4)
+                .transition(.opacity)
+            }
+            
+            Spacer()
+            
+            // Action Buttons
             HStack {
-                Spacer()
                 Button("Cancel") {
                     presentationMode.wrappedValue.dismiss()
                 }
                 .keyboardShortcut(.cancelAction)
                 
-                Button("Add") {
+                Spacer()
+                
+                Button("Add Task") {
                     validateAndSave()
                 }
+                .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
             }
-            .padding(.top)
         }
-        .padding()
-        .frame(width: 400, height: 250)
+        .padding(24)
+        .frame(width: 450, height: 320)
+        .background(Color(nsColor: .windowBackgroundColor))
         .onAppear {
             setDefaultTime()
         }
