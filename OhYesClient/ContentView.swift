@@ -67,7 +67,7 @@ struct MessageRow: View {
                 HStack {
                     if let due = message.dueDate {
                         TimelineView(.periodic(from: .now, by: 60)) { context in
-                            Text("Due \(timeAgo(due, relativeTo: context.date))")
+                            Text("Due \(timeAgo(due, relativeTo: context.date)) (\(formattedExactTime(due)))")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -130,6 +130,16 @@ struct MessageRow: View {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
         return formatter.localizedString(for: date, relativeTo: relativeTo)
+    }
+    
+    private func formattedExactTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        if Calendar.current.isDateInToday(date) {
+            formatter.dateFormat = "HH:mm"
+        } else {
+            formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        }
+        return formatter.string(from: date)
     }
 }
 
