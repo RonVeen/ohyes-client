@@ -58,6 +58,13 @@ class TodoPollingService: ObservableObject {
         print("Checking for due todos at \(Date())...")
         let dueTodos = databaseManager.fetchDueTodos()
 
+        // Create a set of IDs from the currently due todos
+        let currentDueIds = Set(dueTodos.map { $0.id })
+        
+        // Remove IDs from notifiedTodoIds that are no longer in the due list
+        // (e.g. they were completed or snoozed to the future)
+        notifiedTodoIds = notifiedTodoIds.intersection(currentDueIds)
+
         for todo in dueTodos {
             // Only notify if we haven't already notified about this todo
             if !notifiedTodoIds.contains(todo.id) {
