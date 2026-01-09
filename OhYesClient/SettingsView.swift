@@ -11,12 +11,22 @@ struct SettingsView: View {
     @State private var databasePath: String = ""
     @State private var defaultDueTime: String = ""
     @State private var timeErrorMessage: String = ""
+    @StateObject private var launchAtLoginManager = LaunchAtLoginManager.shared
     
     var body: some View {
         Form {
-            Section(header: Text("")) {
+            Section(header: Text("General")) {
+                Toggle("Launch at Login", isOn: $launchAtLoginManager.isEnabled)
+            }
+            
+            Section(header: Text("Database")) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Location of the OhYes SQLite database:")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
                     HStack {
-                        TextField("Path", text: $databasePath)
+                        TextField("Database Path", text: $databasePath)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .disabled(true) // Read-only, use browse button
                         
@@ -24,24 +34,10 @@ struct SettingsView: View {
                             selectDatabaseFile()
                         }
                     }
+                }
             }
             
-            Section(header: Text("")) {
-                    HStack {
-                        TextField("Default due time", text: $defaultDueTime)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(width: 160)
-                            .onChange(of: defaultDueTime) { newValue in
-                                validateAndSaveTime(newValue)
-                            }
-                        
-                        if !timeErrorMessage.isEmpty {
-                            Text(timeErrorMessage)
-                                .foregroundColor(.red)
-                                .font(.caption)
-                        }
-                    }
-            }
+            Section(header: Text("Defaults")) {
             
             Section {
                 Text("Settings saved to ~/ohyes.properties")
