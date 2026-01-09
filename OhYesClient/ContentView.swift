@@ -66,9 +66,11 @@ struct MessageRow: View {
 
                 HStack {
                     if let due = message.dueDate {
-                        Text("Due \(timeAgo(due))")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        TimelineView(.periodic(from: .now, by: 60)) { context in
+                            Text("Due \(timeAgo(due, relativeTo: context.date))")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     } else {
                         Text(message.timestamp, style: .time)
                             .font(.caption)
@@ -101,10 +103,10 @@ struct MessageRow: View {
         }
     }
 
-    private func timeAgo(_ date: Date) -> String {
+    private func timeAgo(_ date: Date, relativeTo: Date) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
-        return formatter.localizedString(for: date, relativeTo: Date())
+        return formatter.localizedString(for: date, relativeTo: relativeTo)
     }
 }
 
