@@ -68,9 +68,6 @@ struct OhYesClientApp: App {
             CommandGroup(replacing: .newItem) {
                 // Remove default "New" item
             }
-            
-            // Remove Tab Bar commands
-            CommandGroup(replacing: .windowTabbing) { }
 
             // Add items to View Menu
             CommandGroup(after: .toolbar) {
